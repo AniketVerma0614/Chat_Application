@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 
 //So,After Acquiring it ==> we'll be setting up the ==>mongoose server as well...==>Let's acquire the Chat Model as well !!!
-const Chat = require("./models/chat.js")
+const Chat = require("./models/chat.js")       
 main().then(()=>{ console.log("Connection Succesfull !!!")})
 .catch(err => console.log(err));
 

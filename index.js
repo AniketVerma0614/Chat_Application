@@ -4,10 +4,11 @@ const app = express();
 //Now  Lets reuire the Mongoose as Well !!!
 const mongoose = require("mongoose");
 const path = require("path");
-const Chat = require("./models/chat.js")
+const Chat = require("./models/chat.js");
 
 app.set("views",path.join(__dirname,"views"));
 app.set("view engine","ejs");
+app.use(express.static(path.join(__dirname,"public")));
 
 
 //Creating the ASYNC fucntion as well !!! ==> Lets se how !!!
@@ -32,11 +33,18 @@ let chat1 = new Chat({
 chat1.save().then((res)=>{
   console.log(res)
 });
-
+//GET request ==> /chats pe he toh hai !!!
+app.get("/chats",async(req,res)=>{
+// Chat.find() ==> we will get all the Data From the MONGO_DB !!! ==>With the help of the MONGOOSE !!!==> 
+    let chats = await Chat.find();
+      console.log(chats);
+      // res.send("Working !!! fot the route /chats");
+      res.render("index.ejs",{chats});
+});
 
 //Then  we will finally be able to acreate the home route !!!
 app.get("/",(req,res)=>{
-    res.send("root is Working");
+    res.send("The root is working !!!");
 });
 
 //Setting up our Server at Port 8080
