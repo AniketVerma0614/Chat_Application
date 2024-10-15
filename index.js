@@ -9,6 +9,9 @@ const Chat = require("./models/chat.js");
 app.set("views",path.join(__dirname,"views"));
 app.set("view engine","ejs");
 app.use(express.static(path.join(__dirname,"public")));
+//So, we won't be able to get the data from the ==> req.body ==> from the post request ==> We need to parse that data !!!
+app.use(express.urlencoded({ extended: true }));
+
 
 
 //Creating the ASYNC fucntion as well !!! ==> Lets se how !!!
@@ -17,7 +20,6 @@ main().then(()=>{ console.log("Connection Succesfull !!!")})
 
 async function main() {
   await mongoose.connect('mongodb://127.0.0.1:27017/whatsapp');
-
 }
 //Now here we will ==> Insert the data into the Chat !!!
 
@@ -41,6 +43,35 @@ app.get("/chats",async(req,res)=>{
       // res.send("Working !!! fot the route /chats");
       res.render("index.ejs",{chats});
 });
+
+//New Route
+app.get("/chats/new",(req,res)=>{
+  res.render("new.ejs");
+});
+
+//Create Route ...
+app.post("/chats",(req,res)=>{
+  let {from,to,msg} = req.body; //So, we won't be able to get the data from the ==> req.body ==> from the post request ==> We need to parse that data !!!
+  let newChat = new Chat({
+    from: from,
+    to: to,
+    msg: msg,
+    created_at: new Date(),
+  });
+  newChat
+  .save()
+  .then(res => {
+    console.log("Chat was saved !!!", res);
+  })
+  .catch(err => {
+    console.log("Error while saving the chat:", err);
+  });
+
+
+  res.redirect("/chats");
+});
+
+
 
 //Then  we will finally be able to acreate the home route !!!
 app.get("/",(req,res)=>{
