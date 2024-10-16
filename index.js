@@ -5,13 +5,14 @@ const app = express();
 const mongoose = require("mongoose");
 const path = require("path");
 const Chat = require("./models/chat.js");
+const methodOverride = require("method-override");
 
 app.set("views",path.join(__dirname,"views"));
 app.set("view engine","ejs");
 app.use(express.static(path.join(__dirname,"public")));
 //So, we won't be able to get the data from the ==> req.body ==> from the post request ==> We need to parse that data !!!
 app.use(express.urlencoded({ extended: true }));
-
+app.use(methodOverride("_method"));
 
 
 //Creating the ASYNC fucntion as well !!! ==> Lets se how !!!
@@ -39,7 +40,7 @@ chat1.save().then((res)=>{
 app.get("/chats",async(req,res)=>{
 // Chat.find() ==> we will get all the Data From the MONGO_DB !!! ==>With the help of the MONGOOSE !!!==> 
     let chats = await Chat.find();
-      console.log(chats);
+      // console.log(chats);
       // res.send("Working !!! fot the route /chats");
       res.render("index.ejs",{chats});
 });
@@ -70,7 +71,24 @@ app.post("/chats",(req,res)=>{
 
   res.redirect("/chats");
 });
+//So, this is Going to be our Edit Route !!!
+// Edit Route
+app.get("/chats/:id/edit", async (req, res) => {
+    let { id } = req.params;
+    let chat = await Chat.findById(id);
+    res.render("edit.ejs", { chat });
+});
 
+
+//Update Route !!!
+app.put("/chats/:id", async (req, res) => {
+  let { id } = req.params;
+  let { msg: newMsg } = req.body;
+  let updatedChat = await Chat.findByIdAndUpdate(id, { msg: newMsg }, { runValidators: true, new: true });
+
+  console.log(updatedChat);
+  res.redirect("/chats");
+});
 
 
 //Then  we will finally be able to acreate the home route !!!
