@@ -7,6 +7,8 @@ const path = require("path");
 const Chat = require("./models/chat.js");
 const methodOverride = require("method-override");
 
+
+
 app.set("views",path.join(__dirname,"views"));
 app.set("view engine","ejs");
 app.use(express.static(path.join(__dirname,"public")));
@@ -88,6 +90,14 @@ app.put("/chats/:id", async (req, res) => {
 
   console.log(updatedChat);
   res.redirect("/chats");
+});
+//Destroy or Delete Route !!!
+app.delete("/chats/:id",async (req,res)=>{
+  let { id } = req.params;
+  let deletedChat=await Chat.findByIdAndDelete(id);
+  console.log(deletedChat);
+  res.redirect("/chats");
+
 });
 
 
